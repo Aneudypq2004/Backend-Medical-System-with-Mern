@@ -5,6 +5,7 @@ import cors from 'cors'
 
 //Routes
 import UserRoutes from './src/Routes/UserRoutes.js';
+import test from './src/Test.js';
 
 //Settings
 
@@ -40,7 +41,8 @@ const PORT = process.env.PORT || 3000
 
 //Routes
 
-app.use('/', UserRoutes)
+app.use('/', UserRoutes);
+app.use('/test', test)
 
 //
 app.listen(PORT, () => {
