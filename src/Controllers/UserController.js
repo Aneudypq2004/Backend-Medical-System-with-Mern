@@ -208,12 +208,14 @@ const Login = async (req, res) => {
         return res.status(403).json({ msg: error.message });
     }
 
+    
     await UserExists.save();
 
     const token = generateJWT({ id: UserExists._id })
 
     const response = {
         _id: UserExists._id,
+        name: UserExists.name,
         email: email.toLowerCase(),
         token
     }
