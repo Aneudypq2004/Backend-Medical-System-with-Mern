@@ -74,7 +74,7 @@ const userConfirm = async (req, res) => {
 
         // Send a response
 
-        return res.status(200).json({ msg: "User confirmed successfully'" })
+        return res.status(200).json({ msg: "User confirmed successfully" })
 
     } catch (error) {
         return res.status(500).json({ msg: error.message })
@@ -99,7 +99,6 @@ const forgotPassword = async (req, res) => {
 
         const UserExists = await User.findOne({ email: email.toLowerCase() });
 
-        console.log(UserExists)
         if (!UserExists) {
             const error = new Error("The user does not exist");
             return res.status(404).json({ msg: error.message });
