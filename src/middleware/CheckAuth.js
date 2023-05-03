@@ -16,7 +16,7 @@ const checkAuth = async (req, res, next) => {
             const decoded = jwt.decode(token, process.env.SECRET_WORD);
 
             req.user = await User.findById(decoded.id)
-                .select('-password -confirm -expireToken -tokenAuth -createdAt -updatedAt -__v')
+                .select('-password -confirm -expireToken -tokenAuth -updatedAt -__v')
             next()
         }
 
