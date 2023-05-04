@@ -170,7 +170,7 @@ const checkToken = async (req, res) => {
             return res.status(404).json({ msg: error.message });
         }
 
-        return res.status(200).json({ msg: "Is valid", isValid : true });
+        return res.status(200).json({ msg: "Is valid", isValid: true });
 
     } catch (error) {
         return res.status(500).json({ msg: error.message });
@@ -183,43 +183,52 @@ const checkToken = async (req, res) => {
 
 const Login = async (req, res) => {
 
-    const { email, password } = req.body
+    try {
 
-    if (email == '' || password == '') {
+        const { email, password } = req.body
 
-        const error = new Error("All field are required");
-        return res.status(401).json({ msg: error.message });
+        if (email == '' || password == '') {
+
+            const error = new Error("All field are required");
+            return res.status(401).json({ msg: error.message });
+        }
+
+        const UserExists = await User.findOne({ email: email.toLowerCase() });
+
+        if (!UserExists || UserExists.confirm == false) {
+            const error = new Error("The user does not exist or the account is not verified");
+            return res.status(404).json({ msg: error.message });
+        }
+
+        //Validate Password
+
+        const validatePassword = await UserExists.checkPassword(password)
+
+        if (!validatePassword) {
+            const error = new Error("The password is incorrect");
+            return res.status(403).json({ msg: error.message });
+        }
+
+
+        await UserExists.save();
+
+        const token = generateJWT({ id: UserExists._id })
+
+        const response = {
+            _id: UserExists._id,
+            name: UserExists.name,
+            email: email.toLowerCase(),
+            token,
+            createdAt: UserExists.createdAt
+        }
+
+        return res.status(200).json({ msg: 'Welcome', response });
+
+    } catch (error) {
+        return res.status(500).json({ msg: error.message });
     }
 
-    const UserExists = await User.findOne({ email: email.toLowerCase() });
 
-    if (!UserExists || UserExists.confirm == false) {
-        const error = new Error("The user does not exist or the account is not verified");
-        return res.status(404).json({ msg: error.message });
-    }
-
-    //Validate Password
-
-    const validatePassword = await UserExists.checkPassword(password)
-
-    if (!validatePassword) {
-        const error = new Error("The password is incorrect");
-        return res.status(403).json({ msg: error.message });
-    }
-
-    
-    await UserExists.save();
-
-    const token = generateJWT({ id: UserExists._id })
-
-    const response = {
-        _id: UserExists._id,
-        name: UserExists.name,
-        email: email.toLowerCase(),
-        token
-    }
-
-    return res.status(200).json({ msg: 'Welcome', response });
 }
 //Home
 
