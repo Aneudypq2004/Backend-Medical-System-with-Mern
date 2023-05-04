@@ -228,7 +228,6 @@ const Login = async (req, res) => {
         return res.status(500).json({ msg: error.message });
     }
 
-
 }
 //Home
 
@@ -239,6 +238,29 @@ const Home = (req, res) => {
     res.json(user)
 }
 
+const editProfile = async (req, res) => {
+
+    try {
+        const { _id } = req.user
+
+        const { name, password } = req.body
+
+        const userUpdate = await User.findById(_id);
+
+        userUpdate.password = password || userUpdate.password
+
+        userUpdate.name = name || userUpdate.name
+
+        await userUpdate.save()
+
+        return res.status(200).json({msg : "Updated User"})
+
+    } catch (error) {
+        return res.status(500).json({ msg: error.message });
+    }
+}
+
+
 export {
     newUser,
     userConfirm,
@@ -246,5 +268,6 @@ export {
     checkToken,
     updateUser,
     Login,
-    Home
+    Home,
+    editProfile
 }
