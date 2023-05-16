@@ -34,7 +34,7 @@ const newUser = async (req, res) => {
 
         // Send email
 
-        // await ConfirmEmail({ name, email, token: addUser.token });
+        await ConfirmEmail({ name, email, token: addUser.token });
 
         await addUser.save()
 
