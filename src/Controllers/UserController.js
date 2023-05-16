@@ -3,6 +3,7 @@ import { generateId } from "../helpers/generateId.js";
 import ConfirmEmail from "../emails/NewUserEmail.js";
 import generateJWT from "../helpers/generateJWT.js";
 import forgotPasswordEmail from "../emails/ForgotPassword.js";
+import Client from "../Models/Clients.js";
 
 // Add User 
 
@@ -33,7 +34,7 @@ const newUser = async (req, res) => {
 
         // Send email
 
-        await ConfirmEmail({ name, email, token: addUser.token });
+        // await ConfirmEmail({ name, email, token: addUser.token });
 
         await addUser.save()
 
@@ -238,6 +239,8 @@ const Home = (req, res) => {
     res.json(user)
 }
 
+//Edit User Profile
+
 const editProfile = async (req, res) => {
 
     try {
@@ -253,13 +256,63 @@ const editProfile = async (req, res) => {
 
         await userUpdate.save()
 
-        return res.status(200).json({msg : "Updated User"})
+        return res.status(200).json({ msg: "Updated User" })
 
     } catch (error) {
         return res.status(500).json({ msg: error.message });
     }
 }
 
+// Add Client
+
+const addClient = async (req, res) => {
+
+    try {
+        const { name, email, tel, price, tasks } = req.body
+
+        if (!name || !email || !tel || !price || !tasks) {
+
+            const error = new Error("All field are required");
+            return res.status(403).json({ msg: error.message });
+        }
+
+        const addClient = await Client({ name, email, tel, price, tasks, userId: req.user._id });
+
+        await addClient.save();
+
+        return res.status(200).json({ msg: 'Add Successfully' });
+
+    } catch (error) {
+        return res.status(500).json({ msg: error.message })
+    }
+
+}
+
+//Get Cliens
+
+const getClients = async (req, res) => {
+    try {
+        const clients = await Client.find({ userId: req.user._id });
+        return res.json({ clients });
+    } catch (error) {
+        return res.status(500).json({ msg: error.message });
+    }
+}
+
+//Delete Clients
+
+const deleteClient = async (req, res) => {
+
+    const { id } = req.params
+
+    try {
+        await Client.findByIdAndDelete(id);
+        return res.status(200).json({msg : "Successfully deleted"});
+
+    } catch (error) {
+        return res.status(500).json({ msg: error.message });        
+    }
+}
 
 export {
     newUser,
@@ -269,5 +322,8 @@ export {
     updateUser,
     Login,
     Home,
-    editProfile
+    editProfile,
+    addClient,
+    getClients,
+    deleteClient
 }

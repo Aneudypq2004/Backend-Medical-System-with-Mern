@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from 'bcrypt'
 
 const UserSchema = new mongoose.Schema({
@@ -23,11 +23,6 @@ const UserSchema = new mongoose.Schema({
         trim: true
     },
 
-    tokenAuth: {
-        type: String,
-        default: null
-    },
-
     token: {
         type: String,
         default: null
@@ -37,6 +32,13 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+
+    clients: [
+        {
+            type : Schema.Types.ObjectId,
+            ref: 'Client'
+        }        
+    ]
 
 },
     {
