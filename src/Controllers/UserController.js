@@ -280,7 +280,7 @@ const addClient = async (req, res) => {
 
         await addClient.save();
 
-        return res.status(200).json({ msg: 'Add Successfully' });
+        return res.status(200).json({ msg: 'Add Successfully', response: addClient });
 
     } catch (error) {
         return res.status(500).json({ msg: error.message })
@@ -307,10 +307,10 @@ const deleteClient = async (req, res) => {
 
     try {
         await Client.findByIdAndDelete(id);
-        return res.status(200).json({msg : "Successfully deleted"});
+        return res.status(200).json({ msg: "Successfully deleted" });
 
     } catch (error) {
-        return res.status(500).json({ msg: error.message });        
+        return res.status(500).json({ msg: error.message });
     }
 }
 
